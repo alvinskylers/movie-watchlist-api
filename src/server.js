@@ -2,16 +2,23 @@ import express from "express";
 import { config } from "dotenv";
 
 //import routes
-import movieRouter from "./routes/movieRoutes.js"
-import { connectDatabase } from "./config/db.js";
+import movieRoutes from "./routes/movieRoutes.js"
+import authRoutes from "./routes/authRoutes.js"
+
+import { connectDatabase, disconnectDatabase } from "./config/db.js";
 
 config();
 connectDatabase();
 
 const app = express();
 
+//json body parser 
+app.use(express.json());
+app.use(express.urlencoded( {extended: true}));
+
 //api routes
-app.use('/movies', movieRouter);
+app.use('/movies', movieRoutes);
+app.use('/auth', authRoutes);
 
 const port = 2020;
 app.listen(port, () => {
