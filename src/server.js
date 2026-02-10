@@ -1,11 +1,11 @@
 import express from "express";
 import { config } from "dotenv";
+import { connectDatabase, disconnectDatabase } from "./config/db.js";
 
 //import routes
 import movieRoutes from "./routes/movieRoutes.js"
 import authRoutes from "./routes/authRoutes.js"
-
-import { connectDatabase, disconnectDatabase } from "./config/db.js";
+import watchlistRoutes from "./routes/watchlistRoutes.js"
 
 config();
 connectDatabase();
@@ -19,6 +19,7 @@ app.use(express.urlencoded( {extended: true}));
 //api routes
 app.use('/movies', movieRoutes);
 app.use('/auth', authRoutes);
+app.use('/watchlist', watchlistRoutes);
 
 const port = 2020;
 app.listen(port, () => {
