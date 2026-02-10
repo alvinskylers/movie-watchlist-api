@@ -70,4 +70,42 @@ const removeFromWatchlist = async (req, res) => {
             message: "watchlist item removed successfully"});
 }
 
-export { addToWatchlist, removeFromWatchlist}
+const updateWatchlist = async (req, res) => {
+    const { status, rating, notes } = req.body;
+
+    const watchlistItem = await prisma.watchlistItem.findUnique({
+        where: {id: req.params.id} 
+    });
+
+    if (!watchlistItem) {
+        return res.status(404).json({ error: "watchlist item not found"});
+    }
+
+    if (watchlistItem.userId !== req.user.id) {
+        return res
+        .status(403)
+        .json({ error : "not allowed to update this watchlist item"});
+    }
+
+    const updateData = {};
+        if (status !== undefined) updateData.status = status.toUpperCase();
+        if (rating !== undefined) updateData.rating = rating;    
+        if (notes !== undefined) updateData.notes = notes;
+    
+    const updatedItem = await prisma.watchlistItem.update({
+        where: { id: req.params.id},
+        data: updateData,
+    });
+
+    return res
+        .status(200)
+        .json({
+            status: "success",
+            data: {
+                watchlistItem: updatedItem,
+            },
+        });
+};
+
+
+export { addToWatchlist, removeFromWatchlist, updateWatchlist }
